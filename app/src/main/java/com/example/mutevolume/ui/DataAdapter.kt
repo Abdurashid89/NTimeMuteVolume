@@ -19,10 +19,11 @@ class DataAdapter(private val list: ArrayList<Today>) : RecyclerView.Adapter<Dat
     }
 
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
-        holder.onBind(list[position])
+        val day = list[calendar[Calendar.DAY_OF_MONTH - 1]]
+        holder.onBind(day)
     }
 
-    override fun getItemCount() = calendar.get(Calendar.DAY_OF_MONTH - 1)
+    override fun getItemCount() = 1
 
 
 }

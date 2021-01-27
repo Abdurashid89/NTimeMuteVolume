@@ -6,9 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
-import android.media.RingtoneManager
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -30,12 +28,19 @@ import kotlin.properties.Delegates
 
 @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
 class HomeFragment : BaseFragment(), MainContract.View {
-    var fajr by Delegates.notNull<Int>()
-    var sunrise by Delegates.notNull<Int>()
-    var dhuhr by Delegates.notNull<Int>()
-    var asr by Delegates.notNull<Int>()
-    var maghrib by Delegates.notNull<Int>()
-    var isha by Delegates.notNull<Int>()
+    var fajrHourse = -1
+    var fajrMinute = -1
+    var sunriseHourse = -1
+    var sunriseMinute = -1
+    var dhuhrHourse = -1
+    var dhuhrMinute = -1
+    var asrHourse = -1
+    var asrMinute = -1
+    var maghribHourse = -1
+    var maghribMinute = -1
+    var ishaHourse = -1
+    var ishaMinute = -1
+    val cal = Calendar.getInstance()
 
     override val resId = R.layout.fragment_home
     lateinit var service: net.Service
@@ -56,28 +61,44 @@ class HomeFragment : BaseFragment(), MainContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rvData = view.findViewById(R.id.rvData)
-        alarm()
         presenter = HomePresenter(requireContext(), this, HomeRepository())
         homeViewModel.getResponse(service).observe(viewLifecycleOwner, { presenter.addData(it) })
+        alarm()
     }
 
 
     override fun addItem(list: ArrayList<Today>) {
 
-        list.forEach {
-            fajr = it.fajr.toInt()
-            sunrise = it.sunrise.toInt()
-            dhuhr = it.dhuhr.toInt()
-            maghrib = it.maghrib.toInt()
-            isha = it.isha.toInt()
-        }
+        val today = list[cal.get(Calendar.DAY_OF_MONTH - 1)]
+        fajrHourse = today.fajr.substring(0, 2).toInt()
+        fajrMinute = today.fajr.substring(3, 5).toInt()
+
+        sunriseHourse = today.sunrise.substring(0, 2).toInt()
+        sunriseMinute = today.sunrise.substring(3, 5).toInt()
+
+        dhuhrHourse = today.dhuhr.substring(0, 2).toInt()
+        dhuhrMinute = today.dhuhr.substring(3, 5).toInt()
+
+        asrHourse = today.dhuhr.substring(0, 2).toInt()
+        asrMinute = today.dhuhr.substring(3, 5).toInt()
+
+        maghribHourse = today.maghrib.substring(0, 2).toInt()
+        maghribMinute = today.maghrib.substring(3, 5).toInt()
+
+        ishaHourse = today.isha.substring(0, 2).toInt()
+        ishaMinute = today.isha.substring(3, 5).toInt()
+
+        Log.d("CCC", "$fajrHourse  $fajrMinute")
+        Log.d(
+            "BBB",
+            "${today.fajr} ${today.sunrise} ${today.dhuhr} ${today.asr} ${today.maghrib} ${today.isha}"
+        )
 
         adapter = DataAdapter(list)
         rvData!!.adapter = adapter
     }
 
     private fun alarm() {
-        val cal = Calendar.getInstance()
 
         val intent = Intent(requireContext(), MyReceiver::class.java)
         intent.action = "myAction"
@@ -86,20 +107,20 @@ class HomeFragment : BaseFragment(), MainContract.View {
         val alarmManager: AlarmManager =
             requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.set(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
-        val currentDateTime = DateFormat.getDateTimeInstance().format(Date())
-        if (cal.get(Calendar.HOUR_OF_DAY) == fajr && cal.get(Calendar.HOUR_OF_DAY) == 12 && cal.get(
+//        val currentDateTime = DateFormat.getDateTimeInstance().format(Date())
+        if (cal.get(Calendar.HOUR_OF_DAY) == fajrHourse.toInt() && cal.get(
                 Calendar.MINUTE
-            ) == 46
-            || cal.get(Calendar.MILLISECOND) == 0
+            ) == fajrMinute.toInt()
+            || cal.get(Calendar.HOUR_OF_DAY) == dhuhrHourse && cal.get(Calendar.MINUTE) == dhuhrMinute
+            || cal.get(Calendar.HOUR_OF_DAY) == asrHourse && cal.get(Calendar.MINUTE) == asrMinute ||
+            cal.get(Calendar.HOUR_OF_DAY) == maghribHourse && cal.get(Calendar.MINUTE) == maghribMinute
+            || cal.get(Calendar.HOUR_OF_DAY) == ishaHourse && cal.get(Calendar.MINUTE) == ishaMinute
         ) {
             requestMutePermission()
-            Log.d("AAA", "${cal.get(Calendar.HOUR_OF_DAY)}")
-            Log.d("AAA", "${cal.get(Calendar.HOUR)}")
-            Log.d("AAA", "${cal.get(Calendar.MINUTE)}")
         }
     }
 
-    fun requestMutePermission() {
+    private fun requestMutePermission() {
         try {
             if (android.os.Build.VERSION.SDK_INT < 23) {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
