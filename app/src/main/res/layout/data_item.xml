@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:padding="10dp"
+    app:cardBackgroundColor="@color/purple_200"
+    app:cardCornerRadius="12dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textColor="@color/white"
+            android:id="@+id/tvMonthName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:hint="month name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:textColor="@color/white"
+            android:id="@+id/tvWeekName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:hint="Week"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/cardViewRight"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cardViewRight" />
+
+        <View
+            android:id="@+id/viewHor"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/guidelineHor"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineHor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".2" />
+
+        <TextView
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Namoz Vaqtlari"
+            android:textSize="24sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelineHor" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/view"
+            app:layout_constraintTop_toBottomOf="@id/guidelineHor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/bomdod"
+                    style="@style/TVTheme"
+                    android:text="Bomdod" />
+
+                <TextView
+                    android:id="@+id/quyosh"
+                    style="@style/TVTheme"
+                    android:text="Quyosh" />
+
+                <TextView
+                    android:id="@+id/peshin"
+                    style="@style/TVTheme"
+                    android:text="Peshin" />
+
+                <TextView
+                    android:id="@+id/asr"
+                    style="@style/TVTheme"
+                    android:text="Asr" />
+
+                <TextView
+                    android:id="@+id/shom"
+                    style="@style/TVTheme"
+                    android:text="Shom" />
+
+                <TextView
+                    android:id="@+id/hufton"
+                    style="@style/TVTheme"
+                    android:text="Xufton" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewRight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/view"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelineHor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/bomdodTime"
+                    style="@style/TVTheme"
+                    android:text="Bomdod" />
+
+                <TextView
+                    android:id="@+id/quyoshTime"
+                    style="@style/TVTheme"
+                    android:text="Quyosh" />
+
+                <TextView
+                    android:id="@+id/peshinTime"
+                    style="@style/TVTheme"
+                    android:text="Peshin" />
+
+                <TextView
+                    android:id="@+id/asrTime"
+                    style="@style/TVTheme"
+                    android:text="Asr" />
+
+                <TextView
+                    android:id="@+id/shomTime"
+                    style="@style/TVTheme"
+                    android:text="Shom" />
+
+                <TextView
+                    android:id="@+id/huftonTime"
+                    style="@style/TVTheme"
+                    android:text="Xufton" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tvHijriy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:hint="hijriy"
+            android:textColor="@color/white"
+            android:padding="4dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardViewRight" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
