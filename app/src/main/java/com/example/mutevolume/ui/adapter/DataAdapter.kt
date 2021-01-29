@@ -1,4 +1,4 @@
-package com.example.mutevolume.ui
+package com.example.mutevolume.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +11,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class DataAdapter(private val list: ArrayList<Today>) : RecyclerView.Adapter<DataHolder>() {
+    private var position: Int = 0
     val calendar = Calendar.getInstance()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataHolder {
         val root = LayoutInflater.from(parent.context)
             .inflate(R.layout.data_item, parent, false)
@@ -19,13 +21,17 @@ class DataAdapter(private val list: ArrayList<Today>) : RecyclerView.Adapter<Dat
     }
 
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
-        val day = list[calendar[Calendar.DAY_OF_MONTH - 1]]
+        this.position = position
+        val day = list[calendar.get(Calendar.DAY_OF_MONTH - 1)]
         holder.onBind(day)
     }
 
     override fun getItemCount() = 1
 
 
+    @JvmName("getPosition1")
+    fun getPosition(): Int = position
+    
 }
 
 class DataHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -54,14 +60,3 @@ class DataHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
 }
-
-/**
- *   val fajr: String? = null,
-val sunrise: String? = null,
-val dhuhr: String? = null,
-val asr: String? = null,
-val sunset: String? = null,
-val maghrib: String? = null,
-val isha: String? = null,
-val imsak: String? = null,
-val midnight: String? = null*/

@@ -21,6 +21,7 @@ interface MainContract {
 
         fun addItem(list: ArrayList<Today>)
 
+
     }
 
     interface Presenter {

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.impl.Schedulers
+import com.example.mutevolume.db.Today
 import com.google.gson.JsonObject
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,6 +19,7 @@ import java.util.*
 class HomeViewModel : ViewModel() {
     private var _message = MutableLiveData<String>()
     private var _data = MutableLiveData<JsonObject>()
+    private var _dayList = MutableLiveData<Today>()
 
 
     @SuppressLint("CheckResult")
@@ -39,6 +41,6 @@ class HomeViewModel : ViewModel() {
     }
 
     val message : LiveData<String> = _message
-
+    val list : LiveData<Today> = _dayList
 
 }

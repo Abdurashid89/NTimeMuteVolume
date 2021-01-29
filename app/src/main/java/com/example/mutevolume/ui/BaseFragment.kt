@@ -31,52 +31,15 @@ abstract class BaseFragment : Fragment() {
 
 
     fun showDialog(show: Boolean) {
-        var progressDialog = ProgressDialog(requireContext())
+        val progressDialog = ProgressDialog(requireContext())
         progressDialog.setTitle("Loading...")
         progressDialog.setMessage("Please Wait...")
 
-        if (show) progressDialog.show() else progressDialog.dismiss()
+        if (show) progressDialog.show() else progressDialog.cancel()
     }
 
-    fun showToast(message: LiveData<String>) {
-        Toast.makeText(requireContext(), "$message", Toast.LENGTH_SHORT).show()
+    fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
-
-
-    /*fun requestMutePermission() {
-        try {
-            if (android.os.Build.VERSION.SDK_INT < 23) {
-                audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-            } else if (android.os.Build.VERSION.SDK_INT >= 23) {
-                val notificationManager: NotificationManager =
-                    requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-
-                if (notificationManager.isNotificationPolicyAccessGranted) {
-                    val audioManager: AudioManager =
-                        requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
-                    kotlin.run { Thread.sleep(5000) }
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-
-                } else {
-                    val intent =
-                        Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    startActivityForResult(intent, 1001)
-                }
-
-            }
-
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1001) {
-            requestMutePermission()
-        }
-    }*/
 
 }
