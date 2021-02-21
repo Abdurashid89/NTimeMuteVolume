@@ -44,8 +44,9 @@ class MyWorker(
 ) {
 
     override fun doWork(): Result {
-        val fajrHourse = inputData.getInt(FAJR_HOURSE, 0)
-        val fajrMinute = inputData.getInt(FAJR_MINUTE, 0)
+        val fajrHourse = inputData.getString(FAJR_HOURSE)
+        val fajrMinute = inputData.getString(FAJR_MINUTE)
+/*        val fajrMinute = inputData.getInt(FAJR_MINUTE, 0)
 
         val dhuhrHourse = inputData.getInt(DHUHR_HOURSE, 0)
         val dhuhrMinute = inputData.getInt(DHUHR_MINUTE, 0)
@@ -57,11 +58,13 @@ class MyWorker(
         val maghribMinute = inputData.getInt(MAGHRIB_MINUTE, 0)
 
         val ishaHourse = inputData.getInt(ISHA_HOURSE, 0)
-        val ishaMinute = inputData.getInt(ISHA_MINUTE, 0)
+        val ishaMinute = inputData.getInt(ISHA_MINUTE, 0)*/
 
 
         val output: Data = workDataOf(
             RESULT_KEY_FAJR_H to fajrHourse,
+            RESULT_KEY_FAJR_M to fajrMinute
+            /*,
             RESULT_KEY_FAJR_M to fajrMinute,
             RESULT_KEY_DHUHR_H to dhuhrHourse,
             RESULT_KEY_DHUHR_M to dhuhrMinute,
@@ -70,8 +73,9 @@ class MyWorker(
             RESULT_KEY_MAGHRIB_H to maghribHourse,
             RESULT_KEY_MAGHRIB_M to maghribMinute,
             RESULT_KEY_ISHA_H to ishaHourse,
-            RESULT_KEY_ISHA_M to ishaMinute
+            RESULT_KEY_ISHA_M to ishaMinute*/
         )
+
         return Result.success(output)
     }
 

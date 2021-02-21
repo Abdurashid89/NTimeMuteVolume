@@ -1,4 +1,4 @@
-package com.example.mutevolume.ui.home
+package com.example.mutevolume.ui
 
 import android.app.NotificationManager
 import android.content.Context
@@ -6,22 +6,24 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
-import androidx.lifecycle.ViewModelProvider
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.mutevolume.R
 import com.example.mutevolume.db.Today
-import com.example.mutevolume.net.NetworkManager
+import com.example.mutevolume.net.visible
 import com.example.mutevolume.presenter.MainContract
 import com.example.mutevolume.presenter.home_presenter.HomePresenter
 import com.example.mutevolume.presenter.home_presenter.HomeRepository
-import com.example.mutevolume.receiver.*
-import com.example.mutevolume.ui.BaseFragment
+import com.example.mutevolume.receiver.FAJR_MINUTE
+import com.example.mutevolume.receiver.MyWorker
+import com.example.mutevolume.receiver.RESULT_KEY_FAJR_M
 import com.example.mutevolume.ui.adapter.DataAdapter
 import com.labo.kaji.fragmentanimations.CubeAnimation
 import net.NetWork
@@ -44,48 +46,40 @@ class HomeFragment : BaseFragment(), MainContract.View {
     var ishaMinute = -1
     val cal = Calendar.getInstance()
     lateinit var day: Today
+    lateinit var progress: ProgressBar
 
     override val resId = R.layout.fragment_home
     lateinit var service: net.Service
-    private lateinit var homeViewModel: HomeViewModel
+
     var rvData: RecyclerView? = null
     lateinit var adapter: DataAdapter
     lateinit var presenter: HomePresenter
-    private var position = -1
-    private lateinit var networkManager: NetworkManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         service = NetWork().service
-
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        networkManager = NetworkManager(requireContext())
-
         rvData = view.findViewById(R.id.rvData)
+        progress = view.findViewById(R.id.progress)
+
         presenter = HomePresenter(requireContext(), this, HomeRepository())
-        if (networkManager.isConnected()) {
-            homeViewModel.getResponse(service)
-                .observe(viewLifecycleOwner, { presenter.addData(it) })
-        } else {
-            showToast("Network error!!!")
-        }
+        presenter.netWork(service)
         alarm()
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        return CubeAnimation.create(CubeAnimation.UP, enter,1000)
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation {
+        return CubeAnimation.create(CubeAnimation.UP, enter, 1000)
     }
 
     override fun addItem(list: ArrayList<Today>) {
         adapter = DataAdapter(list)
-        position = adapter.getPosition()
-        day = list[position]
+
+        day = list[22]
         rvData!!.adapter = adapter
 
         fajrHourse = day.fajr.substring(0, 2).toInt()
@@ -108,9 +102,17 @@ class HomeFragment : BaseFragment(), MainContract.View {
 
     }
 
+    override fun showProgress(isShow: Boolean) {
+        progress.visible(isShow)
+    }
+
+    override fun showMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun alarm() {
 
-        val myData: Data = workDataOf(
+        /*val myData: Data = workDataOf(
             FAJR_HOURSE to fajrHourse,
             FAJR_MINUTE to fajrMinute,
             DHUHR_HOURSE to dhuhrHourse,
@@ -121,19 +123,37 @@ class HomeFragment : BaseFragment(), MainContract.View {
             MAGHRIB_MINUTE to maghribMinute,
             ISHA_HOURSE to ishaHourse,
             ISHA_MINUTE to ishaMinute
-        )
+        )*/
+//        val realTime = "${cal.get(Calendar.HOUR_OF_DAY)}${cal.get(Calendar.MINUTE)}"
+        val realTime = Date().time
+
+        val time = "1:29"
+        val t = time.replace(":", "")
+        val myData = workDataOf(FAJR_MINUTE to t)
         val myWork = OneTimeWorkRequestBuilder<MyWorker>()
             .setInputData(myData)
             .build()
 
         WorkManager.getInstance(requireContext())
             .enqueue(myWork)
+
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(myWork.id)
             .observe(viewLifecycleOwner, { info ->
                 if (info != null && info.state.isFinished) {
 
-                    val fHourse = info.outputData.getInt(RESULT_KEY_FAJR_H, 0)
-                    val fMinute = info.outputData.getInt(RESULT_KEY_FAJR_M, 0)
+//                    val fHourse = info.outputData.getString(RESULT_KEY_FAJR_H)
+                    val fMinute = info.outputData.getString(RESULT_KEY_FAJR_M)
+
+                    val h = fMinute!!.substring(0, 1)
+                    val m = fMinute.substring(1, 3)
+                    val t = (h.toLong() * 60) + m.toLong()
+
+                    Log.d("TIME", "${realTime} == $fMinute $t")
+                    if (realTime == t) {
+                        requestMutePermission()
+                    }
+/*                    val fMinute = info.outputData.getInt(RESULT_KEY_FAJR_M, 0)
+
 
                     val dHourse = info.outputData.getInt(RESULT_KEY_DHUHR_H, 0)
                     val dMinute = info.outputData.getInt(RESULT_KEY_DHUHR_M, 0)
@@ -145,15 +165,15 @@ class HomeFragment : BaseFragment(), MainContract.View {
                     val mMinute = info.outputData.getInt(RESULT_KEY_MAGHRIB_M, 0)
 
                     val iHourse = info.outputData.getInt(RESULT_KEY_ISHA_H, 0)
-                    val iMinute = info.outputData.getInt(RESULT_KEY_ISHA_M, 0)
+                    val iMinute = info.outputData.getInt(RESULT_KEY_ISHA_M, 0)*/
 
-                    when {
+/*                    when {
                         fHourse == cal.get(Calendar.HOUR_OF_DAY) && fMinute == cal.get(Calendar.MINUTE) -> requestMutePermission()
                         dHourse == cal.get(Calendar.HOUR_OF_DAY) && dMinute == cal.get(Calendar.MINUTE) -> requestMutePermission()
                         aHourse == cal.get(Calendar.HOUR_OF_DAY) && aMinute == cal.get(Calendar.MINUTE) -> requestMutePermission()
                         mHourse == cal.get(Calendar.HOUR_OF_DAY) && mMinute == cal.get(Calendar.MINUTE) -> requestMutePermission()
                         iHourse == cal.get(Calendar.HOUR_OF_DAY) && iMinute == cal.get(Calendar.MINUTE) -> requestMutePermission()
-                    }
+                    }*/
                 }
             })
     }
